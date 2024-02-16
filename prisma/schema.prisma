@@ -1,0 +1,33 @@
+// Central schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource centralDb {
+  provider = "mysql"
+  url      = "mysql://root:root@localhost:3306/central_db"
+}
+
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  dbName    String   @unique // Database name for the respective tenant
+  websites  Website[]
+}
+
+model Website {
+  id       Int      @id @default(autoincrement())
+  name     String
+  domain   String   @unique
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId Int
+}
+
+model SuperAdmin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+}
+
+// Extend the schema as needed with additional details for tenants, websites, and superadmin
