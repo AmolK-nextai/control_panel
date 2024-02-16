@@ -1,7 +1,27 @@
-const express=require('express');
-const app = express()
+// index.js
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+// const routes = require('./routes');
+const path = require('path');
+// const nodemailer = require('nodemailer');
+
+const port = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 
 
+// Routes
+// app.use('/api', routes);
 
-console.log("working cicd ")
+// Start server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
