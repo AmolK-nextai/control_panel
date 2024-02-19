@@ -8,26 +8,45 @@ datasource centralDb {
   provider = "mysql"
   url      = "mysql://root:root@localhost:3306/central_db"
 }
+model SuperAdmin {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
 
-model Tenant {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  dbName    String   @unique // Database name for the respective tenant
-  websites  Website[]
+  // Reference to the associated WebsiteAdmin (if any)
+  websiteAdmin WebsiteAdmin?
+}
+
+model WebsiteAdmin {
+  id             Int       @id @default(autoincrement())
+  username       String    @unique
+  password       String
+  contactNumber  String
+  industryName   String
+  websiteId      Int
+  verified       Boolean   @default(false)
+  verifiedBy     SuperAdmin? @relation(fields: [verifiedById], references: [id])
+  verifiedById   Int?   @unique
+
+
+
+  website        Website   @relation(fields: [websiteId], references: [id])
+
+ 
+
+
+   // Timestamps
+  createdAt      DateTime  @default(now())
+
 }
 
 model Website {
-  id       Int      @id @default(autoincrement())
-  name     String
-  domain   String   @unique
-  tenant   Tenant   @relation(fields: [tenantId], references: [id])
-  tenantId Int
-}
+  id           Int      @id @default(autoincrement())
+  name         String
+  domain       String   @unique
+  websiteAdmins WebsiteAdmin[] // One-to-many relationship with WebsiteAdmin
 
-model SuperAdmin {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
+  // Timestamps
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
-
-// Extend the schema as needed with additional details for tenants, websites, and superadmin
